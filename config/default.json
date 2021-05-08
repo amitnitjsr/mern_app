@@ -1,3 +1,4 @@
 {
-    "mongoURI": "mongodb+srv://mern_api:TlnT8UDmSGQQT8Mh@contactkeeper.kszpp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    "mongoURI": "mongodb+srv://mern_api:TlnT8UDmSGQQT8Mh@contactkeeper.kszpp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    "jwtSecret": "hellohi"
 }
