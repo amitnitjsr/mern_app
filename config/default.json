@@ -1,4 +1,6 @@
 {
     "mongoURI": "mongodb+srv://mern_api:TlnT8UDmSGQQT8Mh@contactkeeper.kszpp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-    "jwtSecret": "hellohi"
+    "jwtSecret": "hellohi",
+    "githubVlientId": "738e33b6d457fc01251c",
+    "githubSecret": "8dfdaf98b398f1bb27186e55d98b51e5aeed456d"
 }
