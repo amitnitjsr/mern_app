@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { registerUser } from '../../actions/authActions';
 import TextFieldGroup from '../common/TextFieldGroup';
+import axios from 'axios';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -14,59 +15,91 @@ const Register = () => {
   });
 
   const onChange = (e) => {
-    setFormData({ ...formData, name: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
   const { name, email, password, password2 } = formData;
 
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (password !== password2) {
+
+    }
+    else {
+      const newUser = {
+        name,
+        email,
+        password
+      }
+      try {
+        const config = {
+          headers: {
+            'content-Type': 'application/json'
+          }
+        }
+        const body = JSON.stringify(newUser);
+        const res = await axios.post('/api/users', body, config);
+      }
+      catch (err) {
+        console.error(err.response.data);
+      }
+    }
+  }
+
   return (
-    <div className="register">
-      <div className="container">
-        <div className="row">
-          <div className="col-md-8 m-auto">
-            <h1 className="display-4 text-center">Sign Up</h1>
-            <p className="lead text-center">
-              Create your account
-              </p>
-            <form noValidate onSubmit={this.onSubmit}>
-              <TextFieldGroup
-                placeholder="Name"
-                name="name"
-                value={name}
-                onChange={(e) => onChange(e)}
-                error={errors.name}
-              />
-              <TextFieldGroup
-                placeholder="Email"
-                name="email"
-                type="email"
-                value={email}
-                onChange={(e) => onChange(e)}
-                error={errors.email}
-              // info="This site uses Gravatar so if you want a profile image, use a Gravatar email"
-              />
-              <TextFieldGroup
-                placeholder="Password"
-                name="password"
-                type="password"
-                value={password}
-                onChange={(e) => onChange(e)}
-                error={errors.password}
-              />
-              <TextFieldGroup
-                placeholder="Confirm Password"
-                name="password2"
-                type="password"
-                value={password2}
-                onChange={(e) => onChange(e)}
-                error={errors.password2}
-              />
-              <input type="submit" className="btn btn-info btn-block mt-4" />
-            </form>
-          </div>
+    <Fragment>
+      <h1 className="large text-primary">Sing Up</h1>
+      <p className="lead">
+        <i className="fas fa-user" /> Create Your Account
+      </p>
+      <form className="form" onSubmit={(e) => onSubmit(e)}>
+        <div className="form-group">
+          <input
+            placeholder="Name"
+            name="name"
+            type="text"
+            value={name}
+            onChange={(e) => onChange(e)}
+            required
+          />
         </div>
-      </div>
-    </div>
+        <div className="form-group">
+          <input
+            placeholder="Email Address"
+            name="email"
+            type="email"
+            value={email}
+            onChange={(e) => onChange(e)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <input
+            placeholder="Password"
+            name="password"
+            type="password"
+            value={password}
+            onChange={(e) => onChange(e)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <input
+            placeholder="Confirm Password"
+            name="password2"
+            type="password"
+            value={password2}
+            onChange={(e) => onChange(e)}
+            minLength="6"
+            required
+          />
+        </div>
+        <input type="submit" className="btn btn-primary" value="Register" />
+      </form>
+      <p className="my-1">
+        Already have an account? <Link to="/register">Sign In</Link>
+      </p>
+    </Fragment>
   );
 }
 

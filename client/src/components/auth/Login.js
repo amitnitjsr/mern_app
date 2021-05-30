@@ -1,91 +1,62 @@
-import React, { Component } from 'react';
+import React, { Fragment, useState } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loginUser } from '../../actions/authActions';
 import TextFieldGroup from '../common/TextFieldGroup';
 
 const Login = () => {
-  constructor() {
-    super();
-    this.state = {
-      email: '',
-      password: '',
-      errors: {}
-    };
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [errors, setError] = useState({});
 
-    this.onChange = this.onChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
+  const { password, email } = formData;
+
+  const onChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  componentDidMount() {
-    if (this.props.auth.isAuthenticated) {
-      this.props.history.push('/dashboard');
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.isAuthenticated) {
-      this.props.history.push('/dashboard');
-    }
-
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
-    }
-  }
-
-  onSubmit(e) {
+  const onSubmit = async (e) => {
     e.preventDefault();
-
-    const userData = {
-      email: this.state.email,
-      password: this.state.password
-    };
-
-    this.props.loginUser(userData);
   }
 
-  onChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
-  }
-
-  render() {
-    const { errors } = this.state;
-
-    return (
-      <div className="login">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-8 m-auto">
-              <h1 className="display-4 text-center">Log In</h1>
-              <p className="lead text-center">
-                Sign in to your account
-              </p>
-              <form onSubmit={this.onSubmit}>
-                <TextFieldGroup
-                  placeholder="Email Address"
-                  name="email"
-                  type="email"
-                  value={this.state.email}
-                  onChange={this.onChange}
-                  error={errors.email}
-                />
-
-                <TextFieldGroup
-                  placeholder="Password"
-                  name="password"
-                  type="password"
-                  value={this.state.password}
-                  onChange={this.onChange}
-                  error={errors.password}
-                />
-                <input type="submit" className="btn btn-info btn-block mt-4" />
-              </form>
-            </div>
-          </div>
+  return (
+    <Fragment>
+      <h1 className="large text-primary">Sing In</h1>
+      <p className="lead">
+        <i className="fas fa-user" /> Sign in to your account
+    </p>
+      <form className="form" onSubmit={(e) => onSubmit(e)}>
+        <div className="form-group">
+          <input
+            placeholder="Email Address"
+            name="email"
+            type="email"
+            value={email}
+            onChange={(e) => onChange(e)}
+            required
+          />
         </div>
-      </div>
-    );
-  }
+        <div className="form-group">
+          <input
+            placeholder="Password"
+            name="password"
+            type="password"
+            value={password}
+            onChange={(e) => onChange(e)}
+            required
+          />
+        </div>
+        <input type="submit" className="btn btn-primary" value="Login" />
+      </form>
+      <p className="my-1">
+        Don't have an account? <Link to="/register">Sign Up</Link>
+      </p>
+    </Fragment>
+
+  );
 }
 
 Login.propTypes = {
