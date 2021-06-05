@@ -2,11 +2,12 @@ import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { setAlert } from '../../actions/alert';
 import { registerUser } from '../../actions/authActions';
 import TextFieldGroup from '../common/TextFieldGroup';
-import axios from 'axios';
+import PropTypes from 'prop-types';
 
-const Register = () => {
+const Register = ({ setAlert, registerUser }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,26 +24,27 @@ const Register = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (password !== password2) {
-
+      setAlert('Passwords do not match', 'danger');
     }
     else {
-      const newUser = {
-        name,
-        email,
-        password
-      }
-      try {
-        const config = {
-          headers: {
-            'content-Type': 'application/json'
-          }
-        }
-        const body = JSON.stringify(newUser);
-        const res = await axios.post('/api/users', body, config);
-      }
-      catch (err) {
-        console.error(err.response.data);
-      }
+      registerUser({ name, email, password });
+      // const newUser = {
+      //   name,
+      //   email,
+      //   password
+      // }
+      // try {
+      //   const config = {
+      //     headers: {
+      //       'content-Type': 'application/json'
+      //     }
+      //   }
+      //   const body = JSON.stringify(newUser);
+      //   const res = await axios.post('/api/users', body, config);
+      // }
+      // catch (err) {
+      //   console.error(err.response.data);
+      // }
     }
   }
 
@@ -104,14 +106,10 @@ const Register = () => {
 }
 
 Register.propTypes = {
-  registerUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
+  setAlert: PropTypes.func.isRequired,
+  registerUser: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
-  auth: state.auth,
-  errors: state.errors
-});
 
-export default connect(mapStateToProps, { registerUser })(withRouter(Register));
+
+export default connect(null, { setAlert, registerUser })(Register);
