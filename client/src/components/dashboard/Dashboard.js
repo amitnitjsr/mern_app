@@ -1,53 +1,54 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { getCurrentProfile } from '../../actions/profileActions';
 import { getAllUsers } from '../../actions/profileActions';
 import Spinner from '../common/Spinner';
 import Table from './TableComponent';
 
-class Dashboard extends Component {
-  componentDidMount() {
-    this.props.getAllUsers();
-  }
+class Dashboard =({ getCurrentProfile, auth, profile }) => {
 
-  render() {
-    const { user } = this.props.auth;
-    const { profile, loading } = this.props.profile;
+  useEffect(() => {
+    getCurrentProfile();
+  }, []);
 
-    let dashboardContent;
+  const { user } = this.props.auth;
+  const { profile, loading } = this.props.profile;
 
-    if (profile === null || loading) {
-      dashboardContent = <Spinner />;
-    } else {
-      dashboardContent = (
-        <div>
-          <p className="lead text-muted">Welcome {user.name}</p>
-          <Table
-            list={profile}
-          />
-        </div>
-      );
-    }
+  let dashboardContent;
 
-    return (
-      <div className="dashboard">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <h1 className="display-4">Dashboard</h1>
-              {dashboardContent}
-
-            </div>
-          </div>
-        </div>
+  if (profile === null || loading) {
+    dashboardContent = <Spinner />;
+  } else {
+    dashboardContent = (
+      <div>
+        <p className="lead text-muted">Welcome {user.name}</p>
+        <Table
+          list={profile}
+        />
       </div>
     );
   }
+
+  return (
+    <div className="dashboard">
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+            <h1 className="display-4">Dashboard</h1>
+            {dashboardContent}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
 }
 
 Dashboard.propTypes = {
-  getAllUsers: PropTypes.func.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired
 };
@@ -57,6 +58,6 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps, { getAllUsers })(
+export default connect(mapStateToProps, { getCurrentProfile })(
   Dashboard
 );

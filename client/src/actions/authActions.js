@@ -4,7 +4,10 @@ import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
   USER_LOADED,
-  AUTH_ERROR
+  AUTH_ERROR,
+  LOGIN_SUCCESS,
+  LOGIN_FAIL,
+  LOGOUT
 } from './types';
 
 import setAuthToken from '../utils/setAuthToken';
@@ -44,7 +47,7 @@ export const registerUser = ({ name, email, password }) => async dispatch => {
       type: REGISTER_SUCCESS,
       payload: res.data
     });
-
+    dispatch(loadUser());
   } catch (error) {
     const errors = error.response.data.errors;
     if (errors) {
@@ -57,28 +60,30 @@ export const registerUser = ({ name, email, password }) => async dispatch => {
 
 };
 
-// Login - Get User Token
-export const loginUser = userData => dispatch => {
-  axios
-    .post('/api/users/login', userData)
-    .then(res => {
-      // Save to localStorage
-      const { token } = res.data;
-      // Set token to ls
-      localStorage.setItem('jwtToken', token);
-      // Set token to Auth header
-      setAuthToken(token);
-      // Decode token to get user data
-      const decoded = jwt_decode(token);
-      // Set current user
-      dispatch(setCurrentUser(decoded));
-    })
-    .catch(err =>
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
-      })
-    );
+// Login User
+export const login = (email, password) => async dispatch => {
+  const config = {
+    headers: {
+      'Content-type': 'application/json'
+    }
+  }
+  const body = JSON.stringify({ email, password });
+  try {
+    const res = await axios.post('/api/auth', body, config);
+    dispatch({
+      type: LOGIN_SUCCESS,
+      payload: res.data
+    });
+    dispatch(loadUser());
+  } catch (error) {
+    const errors = error.response.data.errors;
+    if (errors) {
+      errors.forEach(err => dispatch(setAlert(err.msg, 'danger')));
+    }
+    dispatch({
+      type: LOGIN_FAIL,
+    });
+  }
 };
 
 // Set logged in user
@@ -89,8 +94,10 @@ export const setCurrentUser = decoded => {
   };
 };
 
-// Log user out
-export const logoutUser = () => dispatch => {
+// Logout // clear profile
+export const logout = () => dispatch => {
+  dispatch({ type: LOGOUT });
+
   // Remove token from localStorage
   localStorage.removeItem('jwtToken');
   // Remove auth header for future requests
